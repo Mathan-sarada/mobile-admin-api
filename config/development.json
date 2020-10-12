@@ -1,0 +1,16 @@
+{
+    "site": {
+        "url": "http://localhost:9000",
+        "version": "v1",
+        "hmtLink":2
+    },
+    "encryption":{
+        "key":"kf7u6Lr^&k+b+JXTV",
+        "encryptKey":"cgu7W2++T@FN3D@!8",
+        "superadmin_key":"p@eZ29UyF^!UzKd7dN"
+    },
+    "superadmin":{
+        "email":"xyz@gmail.com",
+        "password":"1234567"
+    }
+}
