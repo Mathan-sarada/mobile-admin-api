@@ -19,6 +19,13 @@ class validation {
 
         return schema.validate(req, { abortEarly: false });
     }
+    async vendorMessage(req) {
+        let schema = Joi.object().keys({
+            mobile_number: Joi.string().required().min(10).max(10)
+        });
+
+        return schema.validate(req, { abortEarly: false });
+    }
 
 }
 

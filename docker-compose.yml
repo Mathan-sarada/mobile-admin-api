@@ -26,13 +26,13 @@ services:
 
   redis:
     container_name: redis
-    image: redis:alpine 
+    image: "redis:alpine"  
     restart: always
     ports:
-      - "6379:6379"
+      - 6379:6379
 
   app:
-    container_name: admin-api
+    container_name: core-api
     restart: always
     build: .
     volumes:
@@ -41,8 +41,8 @@ services:
     ports:
       - "9000:9000"
     links:
-      - database  
-      - redis
+      - database 
+      - redis 
     depends_on:
-      - database   
-      - redis
+      - database 
+      - redis   

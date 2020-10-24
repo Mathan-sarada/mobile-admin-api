@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     }
     catch (err) {
         return res.status(500).send(controller.errorMsgFormat({
-            "message:": err.message
+            "message": err.message
         }, "vehicle", 500));
     }
 });
@@ -20,14 +20,14 @@ router.post('/add-vehicle', async (req, res) => {
         let { error } = await validation.addVehicle(req.body.data)
         if (error) {
             return res.status(400).send(controller.errorFormat({
-                "message:": error.message
+                "message": error.message
             }, "vehicle", 400));
         }
         vehicle.addVehicle(req, res)
     }
     catch (err) {
         return res.status(500).send(controller.errorMsgFormat({
-            "message:": err.message
+            "message": err.message
         }, "vehicle", 500));
     }
 
@@ -38,14 +38,14 @@ router.patch('/edit-vehicle/:vehicle_id', async (req, res) => {
         let { error } = await validation.updateVehicle(req.body.data)
         if (error) {
             return res.status(400).send(controller.errorFormat({
-                "message:": error.message
+                "message": error.message
             }, "vehicle", 400));
         }
         vehicle.updateVehicle(req, res)
     }
     catch (err) {
         return res.status(500).send(controller.errorMsgFormat({
-            "message:": err.message
+            "message": err.message
         }, "vehicle", 500));
     }
 });

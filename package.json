@@ -26,6 +26,7 @@
     "mongoose": "^5.10.8",
     "mongoose-deep-populate": "^3.2.0",
     "mongoose-type-url": "^1.0.7",
+    "twilio": "^3.50.0",
     "winston": "^3.3.3"
   }
 }

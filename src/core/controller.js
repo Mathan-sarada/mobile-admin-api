@@ -20,16 +20,14 @@ const controller = () => {
             } else {
                 errors = error;
             }
-            return this.errorMsgFormat({ message: errors }, 'service', 400);
+            return this.errorMsgFormat({ "message": errors }, 'service', 400);
         },
 
         successFormat(res, id = null, type = 'service', code = 200) {
             return Object.assign({
                 "code": code,
                 "errors": false,
-                "data": {
-                     res
-                }
+                "data": res
             });
         }
     }

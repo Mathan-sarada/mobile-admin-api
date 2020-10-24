@@ -1,6 +1,6 @@
 FROM node:10.15.0-alpine
 
-LABEL user = "madhankumar.m@"
+LABEL user = "mathan kumar"
 
 # Create a working directory 
 RUN mkdir -p /usr/src/app
@@ -24,8 +24,6 @@ RUN npm install -g nodemon
 
 # Install dependencies (if any) in package.json
 RUN npm install --quiet
-
-RUN npm update
 
 # Expose port from container so host can access 3000
 EXPOSE 9000

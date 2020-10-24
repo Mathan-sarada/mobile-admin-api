@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     }
     catch (err) {
         return res.status(500).send(controller.errorMsgFormat({
-            "message:": err.message
+            "message": err.message
         }, "vendor", 500));
     }
 });
@@ -20,14 +20,14 @@ router.post('/add-vendor', async (req, res) => {
         let { error } = await validation.addVendor(req.body.data)
         if (error) {
             return res.status(400).send(controller.errorFormat({
-                "message:": error.message
+                "message": error.message
             }, "vendor", 400));
         }
         vendor.addVendor(req, res)
     }
     catch (err) {
         return res.status(500).send(controller.errorMsgFormat({
-            "message:": err.message
+            "message": err.message
         }, "vendor", 500));
     }
 
@@ -38,14 +38,14 @@ router.patch('/edit-vendor/:vendor_id', async (req, res) => {
         let { error } = await validation.updateVendor(req.body.data)
         if (error) {
             return res.status(400).send(controller.errorFormat({
-                "message:": error.message
+                "message": error.message
             }, "vendor", 400));
         }
         vendor.updateVendor(req, res)
     }
     catch (err) {
         return res.status(500).send(controller.errorMsgFormat({
-            "message:": err.message
+            "message": err.message
         }, "vendor", 500));
     }
 });

@@ -9,14 +9,14 @@ router.post('/add-product', async (req, res) => {
         let { error } = await validation.productValidation(req.body.data)
         if (error) {
             return res.status(400).send(controller.errorFormat({
-                "message:": error.message
+                "message": error.message
             }, "product-details", 400));
         }
         product.addProduct(req, res)
     }
     catch (err) {
         return res.status(500).send(controller.errorMsgFormat({
-            "message:": err.message
+            "message": err.message
         }, "product-details", 500));
     }
 });
