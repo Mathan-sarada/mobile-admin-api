@@ -23,13 +23,13 @@ const credentials = () => {
                 }
                 let salt = await bcrypt.genSalt(10);
                 data.password = await bcrypt.hash(data.password, salt);
-                let inc = await superAdmin.findOneAndUpdate({ role: "super-admin", password: data.super_admin_password }, {
-                    $inc: {
-                        admin_users: 1
-                    }
-                });
+                // let inc = await superAdmin.findOneAndUpdate({ role: "super-admin", password: data.super_admin_password }, {
+                //     $inc: {
+                //         admin_users: 1
+                //     }
+                // });
                 let payload = {
-                    admin_id: inc.admin_users,
+                    admin_id:4,
                     name: data.name,
                     email: data.email,
                     role: data.role,

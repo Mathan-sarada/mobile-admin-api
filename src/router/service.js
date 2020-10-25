@@ -65,12 +65,34 @@ router.patch('/edit-category/:category_id', async (req, res) => {
 
 router.post('/add-service', async (req, res) => {
     try {
-        let { error } = await validation.addService(req.body.data)
-        if (error) {
+        if(!req.query.type){
+            return res.status(500).send(controller.errorMsgFormat({
+                "message": "Type is Required"
+            }, "service", 500));
+        }
+        else if(req.query.type == "bike"){
+            let { error } = await validation.addBikeService(req.body.data)
+            if (error) {
+                return res.status(400).send(controller.errorFormat({
+                    "message": error.message
+                }, "service", 400));
+            }
+        }
+        else if(req.query.type == 'battery'){
+            let { error } = await validation.addBatteryService(req.body.data)
+            if (error) {
+                return res.status(400).send(controller.errorFormat({
+                    "message": error.message
+                }, "service", 400));
+            }
+        }
+        else{
             return res.status(400).send(controller.errorFormat({
-                "message": error.message
+                "message":"Type is mismatch only bike or battery allowed"
             }, "service", 400));
         }
+        
+        
         service.addService(req, res)
     }
     catch (err) {
@@ -81,7 +103,7 @@ router.post('/add-service', async (req, res) => {
 
 });
 
-router.patch('/edit-service/:description_id', async (req, res) => {
+router.patch('/edit-service/:service_id', async (req, res) => {
     try {
         let { error } = await validation.updateService(req.body.data)
         if (error) {
@@ -90,6 +112,51 @@ router.patch('/edit-service/:description_id', async (req, res) => {
             }, "service", 400));
         }
         service.updateService(req, res)
+    }
+    catch (err) {
+        return res.status(500).send(controller.errorMsgFormat({
+            "message": err.message
+        }, "service", 500));
+    }
+});
+
+router.post('/location', async (req, res) => {
+    try {
+        let { error } = await validation.addLocation(req.body.data)
+        if (error) {
+            return res.status(400).send(controller.errorFormat({
+                "message": error.message
+            }, "service", 400));
+        }
+        service.addLocation(req, res)
+    }
+    catch (err) {
+        return res.status(500).send(controller.errorMsgFormat({
+            "message": err.message
+        }, "service", 500));
+    }
+
+});
+
+router.get('/location', async (req, res) => {
+    try {
+        await service.getLocation(req, res)
+    }
+    catch (err) {
+        return res.status(500).send(controller.errorMsgFormat({
+            "message": err.message
+        }, "service", 500));
+    }
+});
+router.patch('/location/:location_id', async (req, res) => {
+    try {
+        let { error } = await validation.updateLocation(req.body.data)
+        if (error) {
+            return res.status(400).send(controller.errorFormat({
+                "message": error.message
+            }, "service", 400));
+        }
+        service.updateLocation(req, res)
     }
     catch (err) {
         return res.status(500).send(controller.errorMsgFormat({

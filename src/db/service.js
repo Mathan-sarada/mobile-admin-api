@@ -12,32 +12,33 @@ category.createIndexes();
 
 
 let serviceSchema = new mongoose.Schema({
+    category_id: { type: mongoose.Schema.Types.ObjectId, ref: 'category', index: true },
+    vehicle_id: { type: mongoose.Schema.Types.ObjectId, ref: 'vehicles', index: true },
     service_name: { type: String, required: true, lowercase: true },
+    description: [{ type: String, required: true, lowercase: true }],
+    price: { type: Number, required: true },
+    service_type: { type: String, required: true }
 }, {
     timestamps: { createdAt: 'created_date', updatedAt: 'modified_date' }
 });
 let service = mongoose.model('services', serviceSchema);
 service.createIndexes();
 
-let descriptionSchema = new mongoose.Schema({
-    category_id: { type: mongoose.Schema.Types.ObjectId, ref: 'category', index: true },
-    service_id: { type: mongoose.Schema.Types.ObjectId, ref: 'services', index: true },
-    vehicle_id: { type: mongoose.Schema.Types.ObjectId, ref: 'vehicles', index: true },
-    description: { type: String, required: true, lowercase: true },
-    price: { type: Number, required: true },
-    tax: { type: Number, required: true },
-    createdBy: { type: String },
-    updateBy: { type: String }
+let locationSchema = new mongoose.Schema({
+    location: { type: String },
+    status: { type: Boolean }
+
 }, {
     timestamps: { createdAt: 'created_date', updatedAt: 'modified_date' }
 });
-let description = mongoose.model('service-description', descriptionSchema);
-description.createIndexes();
+let location = mongoose.model('serivce-location', locationSchema);
+location.createIndexes();
+
 
 
 
 
 exports.category = category;
 exports.service = service;
-exports.description = description;
+exports.location = location;
 

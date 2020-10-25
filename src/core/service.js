@@ -1,5 +1,5 @@
 const controller = require('./controller')
-const { category, service, description } = require('../db/service');
+const { category, service, description, location } = require('../db/service');
 const { vehicles } = require('../db/vehicle')
 
 const services = () => {
@@ -90,39 +90,52 @@ const services = () => {
         async addService(req, res) {
             try {
                 let data = req.body.data;
-                let checkService;
+                let payload
                 data.createdBy = req.admin_name
-                checkService = await service.findOne({ service_name: data.service_name })
-                if (!checkService) {
-                    checkService = await new service({ service_name: data.service_name }).save()
-                }
                 let checkCategory = await category.findOne({ category_name: data.category_name })
                 if (!checkCategory) {
                     return res.status(400).send(controller.errorMsgFormat({
                         "message": "Category doesn't exits."
                     }, 'service', 400));
                 }
-                let checkVehicle = await vehicles.findOne({ vehicle_cc: data.vehicle_cc, vehicle_name: data.vehicle_name })
-                if (!checkVehicle) {
-                    return res.status(400).send(controller.errorMsgFormat({
-                        "message": "Vehicle name doesn't exits on vechile cc"
-                    }, 'vehicle', 400));
+                if (req.query.type == 'bike') {
+                    let checkVehicle = await vehicles.findOne({ vehicle_cc: data.vehicle_cc })
+                    if (!checkVehicle) {
+                        return res.status(400).send(controller.errorMsgFormat({
+                            "message": "Vehicle cc doesn't exits "
+                        }, 'service', 400));
+                    }
+                    let checkService = await service.findOne({ service_name: data.service_name, vehicle_id: checkVehicle._id })
+                    if (checkService) {
+                        return res.status(400).send(controller.errorMsgFormat({
+                            "message": "Service already added on vehicle cc"
+                        }, 'service', 400));
+                    }
+                    payload = {
+                        service_name: data.service_name,
+                        category_id: checkCategory._id,
+                        vehicle_id: checkVehicle._id,
+                        description: data.description,
+                        price: data.price,
+                        service_type: req.query.type
+                    }
                 }
-                let checkDescription = await description.findOne({ description: data.description, service_id: checkService._id, category_id: checkCategory._id, vehicle_id: checkVehicle._id })
-                if (checkDescription) {
-                    return res.status(400).send(controller.errorMsgFormat({
-                        "message": "Description already added"
-                    }, 'vehicle', 400));
+                else {
+                    let checkService = await service.findOne({ service_name: data.service_name})
+                    if (checkService) {
+                        return res.status(400).send(controller.errorMsgFormat({
+                            "message": "Service already added"
+                        }, 'service', 400));
+                    }
+                    payload = {
+                        service_name: data.service_name,
+                        category_id: checkCategory._id,
+                        description: data.description,
+                        price: data.price,
+                        service_type: req.query.type
+                    }
                 }
-                let payload = {
-                    service_id: checkService._id,
-                    category_id: checkCategory._id,
-                    vehicle_id: checkVehicle._id,
-                    description: data.description,
-                    price: data.price,
-                    tax: data.tax
-                }
-                await new description(payload).save();
+                await new service(payload).save();
                 return res.status(200).send(controller.successFormat({
                     "message": "Service have been successfully added"
                 }, 'service', 200));
@@ -135,59 +148,10 @@ const services = () => {
         },
         async getService(req, res) {
             try {
-                if (req.query.service_id) {
-                    let checkService = await service.findOne({ service_name: req.query.service_id })
-                    if (!checkService) {
-                        return res.status(400).send(controller.errorMsgFormat({
-                            "message": []
-                        }, 'service', 400));
-                    }
-                    return res.status(200).send(controller.successFormat({
-                        "message": checkService
-                    }, 'service', 200));
-
-                }
-                if (req.query.service_name) {
-                    let checkService = await service.findOne({ service_name: req.query.service_name })
-                    if (!checkService) {
-                        return res.status(400).send(controller.errorMsgFormat({
-                            "message": "Service doesn't exits."
-                        }, 'service', 400));
-                    }
-                    let checkDescription = await description.find({ service_id: checkService._id })
-                        .populate({
-                            path: "category_id",
-                            select: 'category_name status'
-                        })
-                        .populate({
-                            path: "service_id",
-                            select: 'service_name'
-                        })
-                        .populate({
-                            path: "vehicle_id",
-                            select: 'vehicle_name vehicle_cc'
-                        })
-                    if (checkDescription) {
-                        return res.status(200).send(controller.successFormat({
-                            "message": checkDescription
-                        }, 'service', 200));
-                    }
-                    return res.status(200).send(controller.successFormat({
-                        "message": []
-                    }, 'service', 200));
-                }
-                let check = await description.find({})
+                let check = await service.find({})
                     .populate({
                         path: "category_id",
                         select: 'category_name status'
-                    })
-                    .populate({
-                        path: "service_id",
-                        select: 'service_name'
-                    })
-                    .populate({
-                        path: "vehicle_id",
-                        select: 'vehicle_name vehicle_cc'
                     })
                 if (check) {
                     return res.status(200).send(controller.successFormat({
@@ -209,29 +173,22 @@ const services = () => {
             try {
                 let data = req.body.data;
                 data.createdBy = req.admin_name
-                let checkDescriptionId = await description.findOne({ _id: req.params.description_id })
-                if (!checkDescriptionId) {
+                let checkServiceId = await service.findOne({ _id: req.params.service_id })
+                if (!checkServiceId) {
                     return res.status(400).send(controller.errorMsgFormat({
-                        "message": "Description id  doesn't exits."
+                        "message": "Service id  doesn't exits."
                     }, 'service', 400));
                 } if (data.service_name) {
                     let checkService = await service.find({ service_name: data.service_name })
                     if (checkService.length > 0) {
                         return res.status(400).send(controller.errorMsgFormat({
                             "message": "Service already added"
-                        }, 'vehicle', 400));
+                        }, 'service', 400));
                     }
-                    await service.findOneAndUpdate({ _id: checkDescriptionId.service_id }, { service_name: data.service_name })
                 }
-                let checkDescription = await description.findOne({ description: data.description, service_id: checkDescriptionId.service_id, category_id: checkDescriptionId.category_id, vehicle_id: checkDescriptionId.vehicle_id })
-                if (checkDescription) {
-                    return res.status(400).send(controller.errorMsgFormat({
-                        "message": "Description already added"
-                    }, 'vehicle', 400));
-                }
-                await description.findOneAndUpdate({ _id: req.params.description_id }, data)
+                await service.findOneAndUpdate({ _id: req.params.service_id }, data)
                 return res.status(200).send(controller.successFormat({
-                    "message": "Service  had successfully updated."
+                    "message": "Service had successfully updated."
                 }, 'service', 200));
 
             } catch (err) {
@@ -240,6 +197,81 @@ const services = () => {
                 }, 'service', 400));
             }
         },
+        async addLocation(req, res) {
+            try {
+                let data = req.body.data;
+                data.createdBy = req.admin_name
+                let checkData = await location.findOne({ location: data.location, status: true })
+                if (checkData) {
+                    return res.status(400).send(controller.errorMsgFormat({
+                        "message": "Location already added"
+                    }, 'service', 400));
+                }
+                await new location(data).save();
+                return res.status(200).send(controller.successFormat({
+                    "message": "Location have been successfully added"
+                }, 'service', 200));
+            }
+            catch (err) {
+                return res.status(400).send(controller.errorMsgFormat({
+                    "message": err.message
+                }, 'service', 400));
+            }
+        },
+
+        async getLocation(req, res) {
+            try {
+                if (req.query.location) {
+                    let checkLocation = await location.find({ location: req.query.location });
+                    if (checkLocation) {
+                        return res.status(200).send(controller.successFormat({
+                            "message": checkLocation
+                        }, 'service', 200));
+                    }
+                    return res.status(200).send(controller.successFormat({
+                        "message": []
+                    }, 'service', 200));
+                }
+                let check = await location.find({});
+                if (check) {
+                    return res.status(200).send(controller.successFormat({
+                        "message": check
+                    }, 'service', 200));
+                }
+                return res.status(200).send(controller.successFormat({
+                    "message": []
+                }, 'service', 200));
+            }
+            catch (err) {
+                return res.status(400).send(controller.successFormat({
+                    "message": err.message
+                }, 'service', 400));
+            }
+        },
+
+        async updateLocation(req, res) {
+            try {
+                let data = req.body.data;
+                data.updateBy = req.admin_name
+                let checkLocation = await location.findOne({ _id: req.params.location._id })
+                if (!checkLocation) {
+                    return res.status(400).send(controller.errorMsgFormat({
+                        "message": "Location doesn't exits."
+                    }, 'service', 400));
+                }
+                await location.findOneAndUpdate({ _id: req.params.location._id }, data)
+                return res.status(200).send(controller.successFormat({
+                    "message": "Location had successfully updated."
+                }, 'service', 200));
+            }
+            catch (err) {
+                return res.status(400).send(controller.errorMsgFormat({
+                    "message": err.message
+                }, 'service', 400));
+            }
+        },
+
+
     }
 }
 module.exports = services()

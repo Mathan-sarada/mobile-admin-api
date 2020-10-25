@@ -65,12 +65,12 @@ const orderDetail = () => {
                         "message": "Mobile Number doesn't exits on vendor list"
                     }));
                 }
-                // await client.messages
-                //     .create({
-                //         body: `Baallalalal`,
-                //         from: '+1 408 703 5694',
-                //         to: `+91${data.mobile_number}`
-                //     })
+                await client.messages
+                    .create({
+                        body: `Baallalalal`,
+                        from: '+1 408 703 5694',
+                        to: `+91${data.mobile_number}`
+                    })
                 checkOrderDetials.isVerified = true;
                 checkOrderDetials.vendor_email = checkNumber.email
                 checkOrderDetials.save()
