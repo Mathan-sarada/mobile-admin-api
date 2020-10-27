@@ -65,34 +65,6 @@ router.patch('/edit-category/:category_id', async (req, res) => {
 
 router.post('/add-service', async (req, res) => {
     try {
-        if(!req.query.type){
-            return res.status(500).send(controller.errorMsgFormat({
-                "message": "Type is Required"
-            }, "service", 500));
-        }
-        else if(req.query.type == "bike"){
-            let { error } = await validation.addBikeService(req.body.data)
-            if (error) {
-                return res.status(400).send(controller.errorFormat({
-                    "message": error.message
-                }, "service", 400));
-            }
-        }
-        else if(req.query.type == 'battery'){
-            let { error } = await validation.addBatteryService(req.body.data)
-            if (error) {
-                return res.status(400).send(controller.errorFormat({
-                    "message": error.message
-                }, "service", 400));
-            }
-        }
-        else{
-            return res.status(400).send(controller.errorFormat({
-                "message":"Type is mismatch only bike or battery allowed"
-            }, "service", 400));
-        }
-        
-        
         service.addService(req, res)
     }
     catch (err) {

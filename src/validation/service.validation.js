@@ -21,7 +21,7 @@ class validation {
             service_name: Joi.string().required(),
             category_name: Joi.string().required(),
             vehicle_cc: Joi.string().required(),
-            description: Joi.array().items(Joi.string().required()),
+            description: Joi.string().required(),
             price: Joi.number().required(),
         });
 
@@ -32,7 +32,7 @@ class validation {
         let schema = Joi.object().keys({
             service_name: Joi.string().required(),
             category_name: Joi.string().required(),
-            description: Joi.array().items(Joi.string().required()),
+            description: Joi.string().required(),
             price: Joi.number().required(),
         });
 

@@ -1,6 +1,7 @@
 const controller = require('./controller')
 const { category, service, description, location } = require('../db/service');
 const { vehicles } = require('../db/vehicle')
+const validation = require('../validation/service.validation');
 
 const services = () => {
     return {
@@ -90,15 +91,26 @@ const services = () => {
         async addService(req, res) {
             try {
                 let data = req.body.data;
-                let payload
-                data.createdBy = req.admin_name
+                let payload;
                 let checkCategory = await category.findOne({ category_name: data.category_name })
                 if (!checkCategory) {
                     return res.status(400).send(controller.errorMsgFormat({
                         "message": "Category doesn't exits."
                     }, 'service', 400));
                 }
-                if (req.query.type == 'bike') {
+                else if (req.query.type == "bike") {
+
+                }
+                else if (req.query.type == 'battery') {
+
+                }
+                if (checkCategory.category_name == 'bike service') {
+                    let { error } = await validation.addBikeService(req.body.data)
+                    if (error) {
+                        return res.status(400).send(controller.errorFormat({
+                            "message": error.message
+                        }, "service", 400));
+                    }
                     let checkVehicle = await vehicles.findOne({ vehicle_cc: data.vehicle_cc })
                     if (!checkVehicle) {
                         return res.status(400).send(controller.errorMsgFormat({
@@ -117,11 +129,17 @@ const services = () => {
                         vehicle_id: checkVehicle._id,
                         description: data.description,
                         price: data.price,
-                        service_type: req.query.type
+                        service_type: checkCategory.category_name
                     }
                 }
                 else {
-                    let checkService = await service.findOne({ service_name: data.service_name})
+                    let { error } = await validation.addBatteryService(req.body.data)
+                    if (error) {
+                        return res.status(400).send(controller.errorFormat({
+                            "message": error.message
+                        }, "service", 400));
+                    }
+                    let checkService = await service.findOne({ service_name: data.service_name })
                     if (checkService) {
                         return res.status(400).send(controller.errorMsgFormat({
                             "message": "Service already added"
@@ -132,9 +150,10 @@ const services = () => {
                         category_id: checkCategory._id,
                         description: data.description,
                         price: data.price,
-                        service_type: req.query.type
+                        service_type: checkCategory.category_name
                     }
                 }
+                payload .createdBy = req.admin_name
                 await new service(payload).save();
                 return res.status(200).send(controller.successFormat({
                     "message": "Service have been successfully added"
@@ -152,6 +171,9 @@ const services = () => {
                     .populate({
                         path: "category_id",
                         select: 'category_name status'
+                    }).populate({
+                        path: "vehicle_id",
+                        select: 'vehicle_cc'
                     })
                 if (check) {
                     return res.status(200).send(controller.successFormat({
