@@ -284,7 +284,7 @@ const services = () => {
                     }
                 }
 
-                await location.findOneAndUpdate({ _id: req.params.location._id }, data)
+                await location.findOneAndUpdate({ _id: req.params.location_id }, data)
                 return res.status(200).send(controller.successFormat({
                     "message": "Location had successfully updated."
                 }, 'service', 200));
