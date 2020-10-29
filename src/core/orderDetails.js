@@ -77,7 +77,7 @@ const orderDetail = () => {
                 return res.status(200).send(controller.successFormat({
                     'message': "An Message has been sent to vendor mobile number."
                 }, 200))
-
+                    
             } catch (err) {
                 return res.status(400).send(controller.successFormat({
                     "message": err.message
