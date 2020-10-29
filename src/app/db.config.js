@@ -47,8 +47,8 @@ mongoose.connection.on('error', (err) => {
 * @public
 */
 exports.connect = () => {
-   mongoose.connect(`mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_NAME}`,
-   //mongoose.connect('mongodb+srv://Ruah_raja:Ruah_raja@cluster0-ug8hd.mongodb.net/Chatapp?retryWrites=true&w=majority',
+   //mongoose.connect(`mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_NAME}`,
+      mongoose.connect('mongodb+srv://Ruah_raja:Ruah_raja@cluster0-ug8hd.mongodb.net/Chatapp?retryWrites=true&w=majority',
       {
          keepAlive: 1,
          useNewUrlParser: true,

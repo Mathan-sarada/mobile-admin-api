@@ -98,12 +98,6 @@ const services = () => {
                         "message": "Category doesn't exits."
                     }, 'service', 400));
                 }
-                else if (req.query.type == "bike") {
-
-                }
-                else if (req.query.type == 'battery') {
-
-                }
                 if (checkCategory.category_name == 'bike service') {
                     let { error } = await validation.addBikeService(req.body.data)
                     if (error) {
@@ -153,7 +147,7 @@ const services = () => {
                         service_type: checkCategory.category_name
                     }
                 }
-                payload .createdBy = req.admin_name
+                payload.createdBy = req.admin_name
                 await new service(payload).save();
                 return res.status(200).send(controller.successFormat({
                     "message": "Service have been successfully added"
@@ -275,12 +269,21 @@ const services = () => {
             try {
                 let data = req.body.data;
                 data.updateBy = req.admin_name
-                let checkLocation = await location.findOne({ _id: req.params.location._id })
+                let checkLocation = await location.findOne({ _id: req.params.location_id })
                 if (!checkLocation) {
                     return res.status(400).send(controller.errorMsgFormat({
                         "message": "Location doesn't exits."
                     }, 'service', 400));
                 }
+                if (data.location) {
+                    let checkData = await location.findOne({ location: data.location,status:true })
+                    if (checkData) {
+                        return res.status(400).send(controller.errorMsgFormat({
+                            "message": "Location already added"
+                        }, 'service', 400));
+                    }
+                }
+
                 await location.findOneAndUpdate({ _id: req.params.location._id }, data)
                 return res.status(200).send(controller.successFormat({
                     "message": "Location had successfully updated."
