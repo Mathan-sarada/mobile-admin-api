@@ -42,7 +42,8 @@ class validation {
         let schema = Joi.object().keys({
             service_name: Joi.string(),
             description: Joi.string(),
-            price: Joi.number()
+            price: Joi.number(),
+            status:Joi.bool()
         });
 
         return schema.validate(req, { abortEarly: false });

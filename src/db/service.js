@@ -17,7 +17,8 @@ let serviceSchema = new mongoose.Schema({
     service_name: { type: String, required: true, lowercase: true },
     description: { type: String, required: true, lowercase: true },
     price: { type: Number, required: true },
-    service_type: { type: String, required: true }
+    service_type: { type: String, required: true },
+    status: { type: Boolean, default: true }
 }, {
     timestamps: { createdAt: 'created_date', updatedAt: 'modified_date' }
 });
