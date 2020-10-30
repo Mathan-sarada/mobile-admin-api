@@ -28,7 +28,7 @@ const vehicle = () => {
         async getVehicle(req, res) {
             try {
                 if (req.query.vehicle_cc) {
-                    let checkVehicle = await vehicles.findOne({ vehicle_cc: req.query.vehicle_cc, status: true });
+                    let checkVehicle = await vehicles.findOne({ vehicle_cc: req.query.vehicle_cc});
                     if (checkVehicle) {
                         return res.status(200).send(controller.successFormat({
                             "messsage": [checkVehicle]
@@ -38,7 +38,7 @@ const vehicle = () => {
                         "messsage": []
                     }, 'vehicle', 200));
                 }
-                let check = await vehicles.find({ status: true });
+                let check = await vehicles.find({});
                 if (check.length > 0) {
                     return res.status(200).send(controller.successFormat({
                         "messsage": check

@@ -9,7 +9,7 @@ const services = () => {
             try {
                 let data = req.body.data;
                 data.createdBy = req.admin_name
-                let checkData = await category.findOne({ category_name: data.category_name, status: true })
+                let checkData = await category.findOne({ category_name: data.category_name })
                 if (checkData) {
                     return res.status(400).send(controller.errorMsgFormat({
                         "message": "Category name already added"
@@ -30,7 +30,7 @@ const services = () => {
         async getCategory(req, res) {
             try {
                 if (req.query.category_name) {
-                    let checkCategory = await category.find({ category_name: req.query.category_name, status: true });
+                    let checkCategory = await category.find({ category_name: req.query.category_name });
                     if (checkCategory) {
                         return res.status(200).send(controller.successFormat({
                             "message": checkCategory
@@ -40,7 +40,7 @@ const services = () => {
                         "message": []
                     }, 'service', 200));
                 }
-                let check = await category.find({ status: true });
+                let check = await category.find({});
                 if (check) {
                     return res.status(200).send(controller.successFormat({
                         "message": check
@@ -92,7 +92,7 @@ const services = () => {
             try {
                 let data = req.body.data;
                 let payload;
-                let checkCategory = await category.findOne({ category_name: data.category_name })
+                let checkCategory = await category.findOne({ category_name: data.category_name, status: true })
                 if (!checkCategory) {
                     return res.status(400).send(controller.errorMsgFormat({
                         "message": "Category doesn't exits."
@@ -105,7 +105,7 @@ const services = () => {
                             "message": error.message
                         }, "service", 400));
                     }
-                    let checkVehicle = await vehicles.findOne({ vehicle_cc: data.vehicle_cc })
+                    let checkVehicle = await vehicles.findOne({ vehicle_cc: data.vehicle_cc, status: true })
                     if (!checkVehicle) {
                         return res.status(400).send(controller.errorMsgFormat({
                             "message": "Vehicle cc doesn't exits "
@@ -276,7 +276,7 @@ const services = () => {
                     }, 'service', 400));
                 }
                 if (data.location) {
-                    let checkData = await location.findOne({ location: data.location,status:true })
+                    let checkData = await location.findOne({ location: data.location, status: true })
                     if (checkData) {
                         return res.status(400).send(controller.errorMsgFormat({
                             "message": "Location already added"
